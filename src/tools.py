@@ -240,7 +240,7 @@ def send_interview_invitation(candidate_email: str, interview_details: str) -> s
 
 # ============================================================
 # 📜 ĐĂNG KÝ TOOL CHO AGENT
-# ============================================================
+# ===========================================================
 
 AVAILABLE_TOOLS = {
     "extract_resume_info": extract_resume_info,
