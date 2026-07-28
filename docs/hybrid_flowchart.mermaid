@@ -1,0 +1,29 @@
+flowchart TD
+    U["Yêu cầu người dùng"] --> S{"Có cần dữ liệu CV/JD/lịch thực tế?"}
+
+    S -- "Không: tư vấn/chính sách chung" --> B["Chatbot baseline\n1 LLM call, 0 tool call"]
+    B --> BF["Trả lời chung hoặc safe fallback\nKhông khẳng định trạng thái thực tế"]
+
+    S -- "Có" --> V{"Input hợp lệ và\nkhông chứa yêu cầu nhạy cảm?"}
+    V -- "Không" --> F["Safe fallback + HR review\nKhông suy đoán / không side effect"]
+    V -- "Có" --> A["ReAct Agent"]
+
+    A --> X["extract_resume_info"]
+    X --> M["match_resume_to_job"]
+    M --> P{"Đạt ngưỡng và\nđủ evidence?"}
+    P -- "Không" --> R["Nêu kỹ năng thiếu\nKhông đặt lịch"]
+    P -- "Có" --> C["check_interviewer_availability"]
+    C --> T{"Có slot hợp lệ\nvà ứng viên đồng ý?"}
+    T -- "Không" --> F
+    T -- "Có" --> I["schedule_interview"]
+    I --> E["send_interview_invitation\n(nếu email đã được xác minh)"]
+    E --> Z["Final Answer có evidence + HR review"]
+
+    X --> O["Telemetry: Thought, Action, args, Observation"]
+    M --> O
+    C --> O
+    I --> O
+    E --> O
+    O --> G{"Error, action lặp hoặc\nđạt MAX_ITERATIONS?"}
+    G -- "Có" --> F
+    G -- "Không" --> A
